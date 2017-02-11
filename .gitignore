@@ -1,2 +1,4 @@
 .dev-password
 offline_test
+.project
+*.retry

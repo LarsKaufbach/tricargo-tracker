@@ -1,0 +1,22 @@
+- hosts: tracker
+  remote_user: pi
+  become: yes
+  
+  tasks:
+    - name: Uninstall man pages
+      apt:
+        name: manpages
+        state: absent
+        purge: yes
+        
+    - name: Update all packages
+      apt:
+        upgrade: yes
+  
+    - name: Install OpenVPN client
+      apt:
+        name: openvpn
+        state: latest
+        update_cache: yes
+        
+      
