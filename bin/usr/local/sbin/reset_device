@@ -1,0 +1,55 @@
+#!/bin/bash
+
+KEYWORD="$1"
+
+# Find vendor/product-id by keyword
+lsusb=`lsusb | grep $KEYWORD`
+
+if [[ "$lsusb" == "" ]]; then
+	echo "'$KEYWORD' not found in lsusb!"
+	logger -t resetusb "'$KEYWORD' not found lsusb!"
+	exit 1
+fi
+
+IFS=" "
+read -a arr <<< "$lsusb"
+
+idDevice="${arr[5]}"
+
+echo "Device: $idDevice"
+
+IFS=":"
+read -a arr <<< "$idDevice"
+idVendor=${arr[0]}
+idProduct=${arr[1]}
+
+if [[ "$idVendor" == "" || "$idProduct" == "" ]]; then
+	echo "No valid vendor or product!"
+	exit 2
+fi
+echo "Vendor: $idVendor"
+echo "Product: $idProduct"
+
+sysPath=""
+for X in /sys/bus/usb/devices/*; do
+	idV=`cat "$X/idVendor" 2>/dev/null`
+	idP=`cat "$X/idProduct" 2>/dev/null`
+	[[ "$idV" == "$idVendor"  && "$idP" == "$idProduct" ]] && sysPath="$X" && break
+done
+
+if [[ "$sysPath" == "" ]]; then
+	echo "Device not found!" >&2
+	exit 1
+fi
+
+echo "Found device: $sysPath"
+
+logger -t resetusb "Kicking $1 at $sysPath ..."
+echo 0 > "$sysPath/authorized"
+logger -t resetusb "Waiting 10 seconds ..."
+sleep 2s
+logger -t resetusb "Reconnecting ..."
+echo 1 > "$sysPath/authorized"
+
+
+

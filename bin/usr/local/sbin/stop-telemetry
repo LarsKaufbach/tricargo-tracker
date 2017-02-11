@@ -1,0 +1,15 @@
+#!/bin/bash
+
+logger -t telemetry Stopping Tricargo Telemetry Client ...
+
+cd /home/telemetry
+
+if [ ! -f current.pid ]; then
+	echo "No instance found!"
+	exit 1
+fi
+
+PID=`cat current.pid`
+
+kill $PID
+rm current.pid

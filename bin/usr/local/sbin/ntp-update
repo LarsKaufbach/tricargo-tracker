@@ -1,0 +1,34 @@
+#!/bin/bash
+
+logger -t ntp-update "Trying ntp synchronization ..."
+
+
+ntpd -gq >/dev/null
+
+res=$?
+
+ntpTime=""
+ntpTimeSecs=""
+
+if [ $res -eq 0 ]; then
+	ntpTime=$(date)
+	ntpTimeSecs=$(date +%s)
+	logger -t ntp-update "Synchronization ok."
+	
+else
+	logger -t ntp-update "Synchronization failed!"
+	exit 1
+fi
+
+rtcTime=$(hwclock -r) 
+
+logger -t ntp-update "New time is : $ntpTime"
+logger -t ntp-update "RTC time is : $rtcTime"
+
+logger -t ntp-update "Setting RTC to new time ..."
+hwclock -w
+
+rtcTimeSecs=$(date +%s)
+diffTime=$((ntpTimeSecs-rtcTimeSecs))
+
+logger -t ntp-update "Time difference was $diffTime seconds."

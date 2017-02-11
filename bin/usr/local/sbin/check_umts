@@ -1,0 +1,13 @@
+#!/bin/bash
+
+DEVICE="/dev/ttyUSB0"
+KEYWORD="Huawei"
+
+if [[ -c "$DEVICE" ]]; then
+	logger -t check_umts "All good in the hood."
+	exit 0;
+fi
+
+logger -t check_umts "$DEVICE not found! Resetting ..."
+/usr/local/sbin/reset_device "$KEYWORD"
+

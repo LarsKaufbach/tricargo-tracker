@@ -1,0 +1,6 @@
+/var/spool/sms/incoming IN_CLOSE_WRITE /usr/local/sbin/handle-sms $#
+ 
+# /var/spool/sms/incoming   = das zu überwachende Verzeichnis
+# IN_CLOSE_WRITE = einen schreibzugriff überwachen
+# /etc/sh-dateien/smscut.sh  = auszuführende Batch-Datei
+# $#  =  Variable mit Dateinamen der geschriebenen Datei (von incron)

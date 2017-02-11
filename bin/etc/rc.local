@@ -17,15 +17,28 @@
 #  printf "My IP address is %s\n" "$_IP"
 #fi
 
+#logger -t rtc "Initializing RTC-clock"
+#echo ds3231 0x68 > /sys/class/i2c-adapter/i2c-1/new_device
+hwclock -s
+
+#logger -t rtc "RTC-clock: $?"
+
+# Make sure UMTS-Modem is correctly recognized
+/usr/local/sbin/check_umts
+
 # Start UMTS-Modem
 /usr/local/sbin/start_umts.sh
 
 # Start local gps logging
-/usr/local/sbin/gpspiping.sh &
+#/usr/local/sbin/gpspiping.sh &
 
 # Start live tracking
-/usr/local/sbin/tracking_client.sh &
+#/usr/local/sbin/tracking_client.sh &
 
+# Le new live tracking
+start-telemetry
 
+# Erfolg per SMS melden
+send-sms-hello &
 
 exit 0

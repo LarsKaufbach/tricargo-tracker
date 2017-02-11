@@ -1,0 +1,9 @@
+#!/bin/bash
+
+logger -t telemetry Restarting Tricargo Telemetry Client ...
+
+stop-telemetry
+
+sleep 2
+
+start-telemetry

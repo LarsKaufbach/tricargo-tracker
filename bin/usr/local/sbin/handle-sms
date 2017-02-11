@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# Load configuration
+if [ ! -f "/etc/handle-sms.conf" ]; then
+	logger -t handle-sms "No /etc/handle-sms.conf!"
+	exit 1
+fi
+. /etc/handle-sms.conf
+
+echo $SMS_INCOMING_WHITELIST
+exit 1
+
+file=$1
+
+function invalid_command() {
+	/usr/local/sbin/send-sms "Invalid command!"
+}
+
+function handleMessage() {
+	from=$1
+	content=$2
+
+	parts=($content)
+	
+	if [ ${#parts[@]} -eq 0 ]; then
+		invalid_command
+	fi
+	
+	command=${parts[0]}
+
+	if [ "$command" == "ping" ]; then
+		/usr/local/sbin/send-sms "pong"
+	fi
+}
+
+line=$(grep From: $file)
+content=$(sed '1,/^\s*$/d' $file)
+from=${line:6}
+handleMessage "$from" "$content"
+
