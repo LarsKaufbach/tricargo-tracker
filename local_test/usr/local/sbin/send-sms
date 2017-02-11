@@ -1,0 +1,15 @@
+#!/bin/bash
+
+SMS_DESTINATION_NUMBER="491797852570"
+SMS_TEXT="$1"
+SMS_FILENAME="/var/spool/sms/outgoing/send-sms_$(cat /proc/sys/kernel/random/uuid)"
+SMS_HOSTNAME="$(hostname -s)"
+
+cat <<EOF >> "$SMS_FILENAME"
+To: ${SMS_DESTINATION_NUMBER}
+
+From:${SMS_HOSTNAME}
+$(date)
+
+${SMS_TEXT}
+EOF

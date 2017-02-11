@@ -1,0 +1,49 @@
+- hosts: localhost
+
+  vars:
+    ip_address: 192.168.1.26
+    root_mount_location: ./local_test
+    boot_mount_location: ./local_test/boot
+
+  tasks:
+    - name: Read credentials from encrypted file
+      include_vars: bootstrap-networks.yml
+
+    - name: Create WLAN config directory
+      file:
+        path: "{{ root_mount_location }}/etc/wpa_supplicant"
+        state: directory
+
+    - name: Template WLAN config file
+      template:
+        src: wlan-config/wpa_supplicant.conf
+        dest: "{{ root_mount_location }}/etc/wpa_supplicant"
+        force: yes
+
+    - name: Create incron.d directory
+      file:
+        path: "{{ root_mount_location }}/etc/incron.d"
+        state: directory
+
+    - name: Copy config files
+      copy:
+        src: etc
+        dest: "{{ root_mount_location }}"
+        force: yes
+
+    - name: Create /usr/sbin
+      file:
+        path: "{{ root_mount_location }}/usr/local/sbin"
+        state: directory
+
+    - name: Copy script files
+      copy:
+        src: usr
+        dest: "{{ root_mount_location }}"
+        force: yes
+
+    - name: Copy boot scripts
+      copy:
+        src: boot/
+        dest: "{{ boot_mount_location }}"
+        force: yes

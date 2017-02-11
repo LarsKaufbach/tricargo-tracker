@@ -1,0 +1,35 @@
+#!/bin/bash
+
+DIR_INCOMING="/var/spool/sms/incoming"
+
+FILES_INCOMING="${DIR_INCOMING}/*"
+
+function invalid_command() {
+	send-sms "Invalid command!"
+}
+
+function handleMessage() {
+	from=$1
+	content=$2
+
+	parts=($content)
+	
+	if [ ${#parts[@]} -lt 1 ]; then
+		invalid_command
+	fi
+	
+	command=${parts[0]}
+	
+	if [[ $command == "ping" ]]; then
+		send-sms "pong"
+	fi
+}
+
+for file in $FILES_INCOMING; do
+
+	line=$(grep From: $file)
+	content=$(sed '1,/^\s*$/d' $file)
+	from=${line:6}
+	handleMessage "$from" "$content"
+done
+

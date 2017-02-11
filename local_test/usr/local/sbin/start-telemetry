@@ -1,0 +1,13 @@
+#!/bin/bash
+
+logger -t telemetry TTC waiting for ntp time sync ...
+
+ntp-wait -n 10000 -s 1
+
+logger -t telemetry Starting Tricargo Telemetry Client ...
+
+cd /home/telemetry
+java -jar ttc.jar &
+PID=$!
+
+echo $PID > current.pid
