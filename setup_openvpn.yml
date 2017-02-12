@@ -1,0 +1,4 @@
+- hosts: tricargo
+  become: yes
+  
+  

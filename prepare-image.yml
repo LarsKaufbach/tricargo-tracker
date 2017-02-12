@@ -2,6 +2,10 @@
   remote_user: pi
   become: yes
   
+  vars:
+    vpn_server_address: trs.tricargo.de
+    vpn_server_port: 1194
+  
   tasks:
     - name: Uninstall man pages
       apt:
@@ -12,11 +16,22 @@
     - name: Update all packages
       apt:
         upgrade: yes
+        update_cache: yes
   
     - name: Install OpenVPN client
       apt:
         name: openvpn
         state: latest
-        update_cache: yes
         
+    - name: Create OpenVPN config directory
+      file:
+        path: /etc/openvpn
+        state: directory
+        
+    - name: Copy OpenVPN config file
+      template:
+        src: vpn-config/client.conf
+        dest: "/etc/openvpn"
+        force: yes
+      
       
