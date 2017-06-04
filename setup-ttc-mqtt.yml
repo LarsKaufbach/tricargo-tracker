@@ -1,0 +1,52 @@
+---
+- hosts: tracker
+  tasks:
+    
+    - name: Ensure start script is there
+      copy:
+        src: files/usr/local/sbin/start-mqtt
+        dest: /usr/local/sbin
+        mode: 0744
+        owner: root
+        group: staff
+      become: yes
+    
+    - name: Ensure stop script is there
+      copy:
+        src: files/usr/local/sbin/stop-mqtt
+        dest: /usr/local/sbin
+        mode: 0744
+        owner: root
+        group: staff
+      become: yes
+      
+    - name: Ensure init.d script is there
+      copy:
+        src: files/etc/init.d/tts
+        dest: /etc/init.d
+        mode: 0755
+      become: yes
+
+    - name: Ensure client directory
+      file:
+        path: /home/telemetry/bin-mqtt
+        state: directory
+        owner: telemetry
+        group: telemetry
+      become: yes       
+      
+    - name: Update telemetry client files
+      copy:
+        src: /home/falk/Archiv/Projekte/tricargo/Telemetrie/Software/TelemetryClient/bin-mqtt/
+        dest: /home/telemetry/bin-mqtt/
+        owner: telemetry
+        group: telemetry
+      become: yes
+     
+    - name: Enable telemetry client now and on startup
+      systemd:
+        name: tts
+        enabled: yes
+        state: started
+        daemon_reload: yes
+      become: yes

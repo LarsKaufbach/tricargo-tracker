@@ -1,0 +1,34 @@
+#! /bin/sh
+### BEGIN INIT INFO
+# Provides:          mybootdisplay
+# Required-Start:    mountdevsubfs
+# Required-Stop:     mountdevsubfs
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: creates RTC device
+### END INIT INFO
+
+. /lib/lsb/init-functions
+
+case "$1" in
+      start)
+            if [ ! -e /dev/rtc0 ]; then
+                log_action_msg "Creating RTC device..."
+                echo ds3231 0x68 > /sys/class/i2c-adapter/i2c-1/new_device
+		#hwclock --rtc=/dev/rtc0 --debug -s
+		else
+		logger -t FALK "Device already there!"
+            fi
+            ;;
+      restart|reload|force-reload)
+            echo "Error: argument '$1' not supported" >&2
+            exit 3
+            ;;
+      stop)
+            # No-op
+            ;;
+      *)
+            echo "Usage: $0 start|stop" >&2
+            exit 3
+            ;;
+    esac

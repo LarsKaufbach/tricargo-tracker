@@ -1,0 +1,22 @@
+---
+- hosts: tracker
+  tasks:
+    - name: Ensure telemetry client is not running
+      service: 
+        name: tts
+        state: stopped
+      become: yes
+  
+    - name: Update telemetry client files
+      copy:
+        src: /home/falk/Archiv/Projekte/tricargo/Telemetrie/Software/TelemetryClient/bin-mqtt/
+        dest: /home/telemetry/bin-mqtt/
+        owner: telemetry
+        group: telemetry
+      become: yes
+        
+    - name: Ensure telemetry client is running
+      service:
+        name: tts
+        state: started
+      become: yes

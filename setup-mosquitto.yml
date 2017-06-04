@@ -1,0 +1,29 @@
+---
+- hosts: tracker
+  tasks:
+  
+  - name: Ensure mosquitto service is installed
+    package:
+      name: mosquitto
+      state: present
+    become: yes
+    
+  - name: Ensure mosquitto.conf
+    template:
+      src: files/etc/mosquitto/mosquitto.conf
+      dest: /etc/mosquitto
+      force: yes
+    become: yes
+  
+  - name: Ensure conf.d/tricargo.conf
+    template:
+      src: files/etc/mosquitto/conf.d/tricargo.conf
+      dest: /etc/mosquitto/conf.d
+      force: yes
+    become: yes
+      
+  - name: Ensure mosquitto restart
+    systemd:
+      name: mosquitto
+      state: restarted
+    become: yes
